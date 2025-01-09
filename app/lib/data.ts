@@ -143,15 +143,15 @@ export async function fetchInvoicesPages(query: string) {
 
 export async function fetchInvoiceById(id: string) {
     try {
-        const data = await sql<InvoiceForm>`
+        const data = await sql.query<InvoiceForm>(`
       SELECT
         invoices.id,
         invoices.customer_id,
         invoices.amount,
         invoices.status
       FROM invoices
-      WHERE invoices.id = ${id};
-    `;
+      WHERE invoices.id = $1;
+    `, [id]);
 
         const invoice = data.rows.map((invoice) => ({
             ...invoice,
@@ -168,13 +168,13 @@ export async function fetchInvoiceById(id: string) {
 
 export async function fetchCustomers() {
     try {
-        const data = await sql<CustomerField>`
+        const data = await sql.query<CustomerField>(`
       SELECT
         id,
         name
       FROM customers
       ORDER BY name ASC
-    `;
+    `);
 
         const customers = data.rows;
         return customers;
