@@ -16,7 +16,7 @@ const FormSchema = z.object({
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
 const UpdateInvoice = FormSchema.omit({ id: true, date: true });
 
-export async function createInvoice(formData: FormData) {
+export async function createInvoice(formData: FormData): Promise<void> {
     const { customerId, amount, status } = CreateInvoice.parse({
         customerId: formData.get('customerId'),
         amount: formData.get('amount'),
@@ -33,16 +33,14 @@ export async function createInvoice(formData: FormData) {
             [customerId, amountInCents, status, date]
         );
     } catch (error) {
-        return {
-            message: 'Database Error: Failed to Create Invoice.',
-        };
+        console.error('Database Error: Failed to Create Invoice.');
     }
 
     revalidatePath('/dashboard/invoices');
     redirect('/dashboard/invoices');
 }
 
-export async function updateInvoice(id: string, formData: FormData) {
+export async function updateInvoice(id: string, formData: FormData): Promise<void> {
     const { customerId, amount, status } = UpdateInvoice.parse({
         customerId: formData.get('customerId'),
         amount: formData.get('amount'),
@@ -57,22 +55,21 @@ export async function updateInvoice(id: string, formData: FormData) {
             [customerId, amountInCents, status, id]
         );
     } catch (error) {
-        return { message: 'Database Error: Failed to Update Invoice.' };
+        console.error('Database Error: Failed to Update Invoice.', error);
     }
 
     revalidatePath('/dashboard/invoices');
     redirect('/dashboard/invoices');
 }
 
-export async function deleteInvoice(id: string) {
+export async function deleteInvoice(id: string): Promise<void> {
     // throw new Error('Failed to Delete Invoice');
 
     try {
         await sql.query(`DELETE FROM invoices WHERE id = $1`, [id]);
         revalidatePath('/dashboard/invoices');
-        return { message: 'Deleted Invoice.' };
     } catch (error) {
-        return { message: 'Database Error: Failed to Delete Invoice.' };
+        console.error('Database Error: Failed to Delete Invoice.');
     }
 
 }
