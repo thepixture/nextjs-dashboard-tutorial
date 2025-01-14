@@ -92,10 +92,10 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
             [customerId, amountInCents, status, id]
         );
     } catch (error) {
-        return {
-            message: 'Missing Fields. Failed to Create Invoice.',
-        };
-        // console.error('Database Error: Failed to Update Invoice.', error);
+        // return {
+        //     message: 'Missing Fields. Failed to Create Invoice.',
+        // };
+        console.error('Database Error: Failed to Update Invoice.', error);
     }
 
     revalidatePath('/dashboard/invoices');
